@@ -18,28 +18,12 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/views/index.html');
 });
 
-app.get('/api/timestamp/', (req, res) => {
-	res.json({ unix: Date.now(), utc: Date() });
-});
-
-app.get('/api/timestamp/:date_string', (req, res) => {
-	let dateString = req.params.date_string;
-
-	//A 4 digit number is a valid ISO-8601 for the beginning of that year
-	//5 digits or more must be a unix time, until we reach a year 10,000 problem
-	if (/\d{5,}/.test(dateString)) {
-		let dateInt = parseInt(dateString);
-		//Date regards numbers as unix timestamps, strings are processed differently
-		res.json({ unix: dateString, utc: new Date(dateInt).toUTCString() });
-	}
-
-	let dateObject = new Date(dateString);
-
-	if (dateObject.toString() === 'Invalid Date') {
-		res.json({ error: 'Invaid Date' });
-	} else {
-		res.json({ unix: dateObject.valueOf(), utc: dateObject.toUTCString() });
-	}
+app.get('/api/whoami', (req, res) => {
+	res.json({
+		ip: req.ip,
+		language: req.headers['accept-language'],
+		software: req.headers['user-agent'],
+	});
 });
 
 // listen for requests :)
